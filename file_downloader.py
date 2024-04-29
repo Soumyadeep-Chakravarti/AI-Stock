@@ -9,7 +9,7 @@ Classes:
 Example usage:
     if __name__ == "__main__":
         downloader = FileDownloader()
-        downloader.download_and_extract("https://example.com/example.zip")
+        downloader.download_and_extract("https://example.com/example.zip", "/your/target/directory/path")
 """
 
 
@@ -35,14 +35,13 @@ class FileDownloader:
         """
         self.session = requests.Session()
 
-    def download_and_extract(self, url, target_dir="."):
+    def download_and_extract(self, url, target_dir):
         """
         Download a ZIP file from the given URL and extract its contents.
 
         Args:
             url (str): The URL of the ZIP file.
             target_dir (str): The directory where the extracted files will be saved.
-                              Defaults to the current directory.
         """
         try:
             # Send a GET request to the URL
