@@ -8,7 +8,7 @@ Functions:
 """
 
 import os
-from datetime import datetime
+from datetime import datetime , timedelta
 
 def format_date(input_date):
     """
@@ -29,14 +29,15 @@ def format_date(input_date):
     return formatted_date
 
 today_date = datetime.today()
-
+yesterday_date = today_date - timedelta(days = 1)
 # Format the date using the format_date function
 formatted_today_date = format_date(today_date.strftime('%Y-%m-%d'))
-
+formatted_yestrday_date = format_date(yesterday_date.strftime('%Y-%m-%d'))
 # List of website URLs
 website_urls = [
     f'https://nsearchives.nseindia.com/content/historical/EQUITIES/{today_date.strftime("%Y")}/{today_date.strftime("%b").upper()}/cm{formatted_today_date}bhav.csv.zip',
-    'https://www.topstockresearch.com/rt/Screener/Technical/PivotPoint/StandardPivotPoint/ListSupportOrResistance'
+    'https://www.topstockresearch.com/rt/Screener/Technical/PivotPoint/StandardPivotPoint/ListSupportOrResistance',
+    f'https://nsearchives.nseindia.com/content/historical/EQUITIES/{yesterday_date.strftime("%Y")}/{yesterday_date.strftime("%b").upper()}/cm{formatted_yestrday_date}bhav.csv.zip'
 ]
 
 # Path to the "Documents" folder

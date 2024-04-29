@@ -6,7 +6,7 @@ import web_copier as wc
 import imp_items
 
 OUTPUT_DIR = os.path.join(imp_items.paths[1], imp_items.formatted_today_date)
-second_OUTPUT_DIR = os.path.join(imp_items.paths[1], imp_items.formatted_yesterday_date)
+second_OUTPUT_DIR = os.path.join(imp_items.paths[1], imp_items.formatted_yestrday_date)
 WEBSITE_URL = imp_items.website_urls[1]
 
 # Define functions for file downloading and HTML copying
