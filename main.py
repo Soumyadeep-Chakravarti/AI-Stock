@@ -4,7 +4,7 @@ import os
 from scripts import data_formating as data_format
 from scripts import file_downloader as fd
 from scripts import web_copier as wc
-import imp_items
+from scripts import imp_items
 
 downloader = fd.FileDownloader()
 WEBSITE_URL = imp_items.website_urls[1]
