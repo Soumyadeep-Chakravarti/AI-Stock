@@ -1,3 +1,31 @@
+"""
+Bhavcopy Downloader Module
+
+This module provides a class, BhavcopyDownloader, to download Bhavcopy data for a specified time period
+and save it to a specified directory.
+
+Classes:
+    BhavcopyDownloader: A class to download Bhavcopy data for a specified time period.
+
+Usage:
+    1. Import the BhavcopyDownloader class from this module.
+    2. Create an instance of BhavcopyDownloader with the desired save path.
+    3. Call the download_bhavcopy_data() method to download Bhavcopy data for the specified time period.
+
+Example:
+    from bhavcopy_downloader import BhavcopyDownloader
+
+    # Set the save path for Bhavcopy data
+    save_path = "/path/to/save/data"
+
+    # Create an instance of BhavcopyDownloader
+    downloader = BhavcopyDownloader(save_path)
+
+    # Download Bhavcopy data
+    downloaded_file_path = downloader.download_bhavcopy_data()
+    print("Bhavcopy data downloaded and saved at:", downloaded_file_path)
+"""
+
 import os
 import imp_items
 import bhavcopy
