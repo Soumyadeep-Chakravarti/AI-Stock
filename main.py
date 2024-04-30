@@ -12,7 +12,7 @@ WEBSITE_URL = imp_items.website_urls[1]
 # Define functions for file downloading and HTML copying
 def file(path_dir):
     downloader = fd.BhavcopyDownloader(path_dir)
-    downloader.download_bhavcopy_data()
+    return downloader.download_bhavcopy_data()
 
 def html_copy():
     web_copier = wc.WebTableCopier()
@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     # After both threads have finished, merge and save the data
     path1 = file(OUTPUT_DIR)
-    if path1 == 'url_not_available_yet':
+    if path1 is None:
         path1 = file(second_OUTPUT_DIR)
     processor = data_format.CompanyDataProcessor(path1, os.path.join(OUTPUT_DIR, 'table.csv'))
     processor.merge_and_save()
