@@ -1,10 +1,8 @@
-from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
+import urllib.request
 import os
 import zipfile
 import time
+import math
 
 class FileDownloader:
     """
@@ -21,20 +19,7 @@ class FileDownloader:
         """
         Initialize the FileDownloader object.
         """
-        self.driver = None
-
-    def _create_driver(self):
-        """
-        Create a WebDriver instance with custom settings.
-
-        Returns:
-            WebDriver: A WebDriver instance.
-        """
-        # Use WebDriver Manager to automatically download and manage Chrome WebDriver binary
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")  # Run Chrome in headless mode (without opening browser window)
-        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
-        return driver
+        self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'}
 
     def download_and_extract(self, url, target_dir, retries=3, timeout=30, verbose=False):
         """
@@ -50,28 +35,28 @@ class FileDownloader:
         Returns:
             str: The path of the saved file.
         """
-        self.driver = self._create_driver()
-
         for attempt in range(1, retries + 1):
             try:
                 if verbose:
                     print(f"Attempt #{attempt} to download file from:", url)
                 
-                self.driver.get(url)
-                time.sleep(3)  # Wait for the page to load (adjust as needed)
+                # Create a request object with custom headers
+                req = urllib.request.Request(url, headers=self.headers)
+                
+                # Open the URL and read the content
+                with urllib.request.urlopen(req, timeout=timeout) as response:
+                    content = response.read()
 
-                # Assuming the download starts automatically, wait for some time for it to complete
-                time.sleep(10)  # Adjust as needed
-
-                # Move the downloaded file to the target directory
+                # Save the content to a file
                 file_path = os.path.join(target_dir, os.path.basename(url))
-                os.rename(file_path, os.path.join(target_dir, "downloaded_file.zip"))
+                with open(file_path, 'wb') as f:
+                    f.write(content)
 
                 if verbose:
                     print("File downloaded successfully.")
 
                 # Extract the contents of the ZIP file
-                with zipfile.ZipFile(os.path.join(target_dir, "downloaded_file.zip"), 'r') as zip_ref:
+                with zipfile.ZipFile(file_path, 'r') as zip_ref:
                     zip_ref.extractall(target_dir)
 
                 if verbose:
@@ -79,18 +64,17 @@ class FileDownloader:
                 
                 return file_path  # Return the path of the saved file
 
-            except (WebDriverException, zipfile.BadZipFile) as e:
+            except Exception as e:
                 print(f"Error during download attempt #{attempt}: {e}")
                 if attempt < retries:
                     print("Retrying...")
+                    delay = 2 ** attempt  # Exponential backoff: increase delay exponentially with each retry
+                    print(f"Waiting for {delay} seconds before retrying...")
+                    time.sleep(delay)
                     continue
                 else:
                     print("Max retries exceeded. Download failed.")
                     break
-
-            finally:
-                # Clean up resources
-                self.driver.quit()
 
 if __name__ == "__main__":
     OUTPUT_DIR = "downloads"
