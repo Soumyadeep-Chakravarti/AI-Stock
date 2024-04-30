@@ -48,7 +48,9 @@ class BhavcopyDownloader:
 
         # Instantiate Bhavcopy class for equities, indices, and derivatives
         nse_equities = bhavcopy.bhavcopy('equities', imp_items.yesterday_date, imp_items.today_date, data_storage, wait_time)
-        file_path = nse_equities.get_data()
+        nse_equities.get_data()
+
+        file_path = os.path.join(data_storage,'equities.csv')
 
         return file_path
 
