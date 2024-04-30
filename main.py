@@ -10,9 +10,9 @@ second_OUTPUT_DIR = os.path.join(imp_items.paths[1], imp_items.formatted_yestrda
 WEBSITE_URL = imp_items.website_urls[1]
 
 # Define functions for file downloading and HTML copying
-def file(url,path_dir):
-    downloader = fd.FileDownloader()
-    return downloader.download_and_extract(url,path_dir)
+def file(path_dir):
+    downloader = fd.BhavcopyDownloader(path_dir)
+    downloader.download_bhavcopy_data()
 
 def html_copy():
     web_copier = wc.WebTableCopier()
@@ -33,8 +33,8 @@ if __name__ == "__main__":
     html_copy_thread.join()
 
     # After both threads have finished, merge and save the data
-    path1 = file(imp_items.website_urls[0],OUTPUT_DIR)
+    path1 = file(OUTPUT_DIR)
     if path1 == 'url_not_available_yet':
-        path1 = file(imp_items.website_urls[2],second_OUTPUT_DIR)
+        path1 = file(second_OUTPUT_DIR)
     processor = data_format.CompanyDataProcessor(path1, os.path.join(OUTPUT_DIR, 'table.csv'))
     processor.merge_and_save()

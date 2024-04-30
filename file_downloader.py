@@ -1,83 +1,59 @@
-import urllib.request
 import os
-import zipfile
-import time
-import math
+import imp_items
+import bhavcopy
 
-class FileDownloader:
+class BhavcopyDownloader:
     """
-    FileDownloader class
+    A class to download Bhavcopy data for a specified time period.
 
-    This class provides methods to download and extract files from URLs.
-
-    Methods:
-        __init__: Initializes the FileDownloader object.
-        download_and_extract: Downloads a ZIP file from a URL and extracts its contents.
+    Attributes:
+        save_path (str): The directory path where Bhavcopy data will be saved.
     """
 
-    def __init__(self):
+    def __init__(self, path):
         """
-        Initialize the FileDownloader object.
-        """
-        self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'}
-
-    def download_and_extract(self, url, target_dir, retries=3, timeout=30, verbose=False):
-        """
-        Download a ZIP file from the given URL and extract its contents.
+        Initialize the BhavcopyDownloader class with the specified save path.
 
         Args:
-            url (str): The URL of the ZIP file.
-            target_dir (str): The directory where the extracted files will be saved.
-            retries (int): Number of retries in case of download failure. Defaults to 3.
-            timeout (int): Timeout duration for each download attempt. Defaults to 30 seconds.
-            verbose (bool): Whether to print verbose messages. Defaults to False.
+            path (str): The directory path where Bhavcopy data will be saved.
+        """
+        self.save_path = path
+
+    def download_bhavcopy_data(self):
+        """
+        Download Bhavcopy data for the specified time period and save it to the specified path.
 
         Returns:
-            str: The path of the saved file.
+            str: The file path of the downloaded Bhavcopy data.
         """
-        for attempt in range(1, retries + 1):
-            try:
-                if verbose:
-                    print(f"Attempt #{attempt} to download file from:", url)
-                
-                # Create a request object with custom headers
-                req = urllib.request.Request(url, headers=self.headers)
-                
-                # Open the URL and read the content
-                with urllib.request.urlopen(req, timeout=timeout) as response:
-                    content = response.read()
+        if not self.save_path:
+            raise ValueError("Save path not set. Please set the save path using set_save_path method.")
 
-                # Save the content to a file
-                file_path = os.path.join(target_dir, os.path.basename(url))
-                with open(file_path, 'wb') as f:
-                    f.write(content)
+        # Define wait time in seconds to avoid getting blocked
+        wait_time = [1, 2]
 
-                if verbose:
-                    print("File downloaded successfully.")
+        # Place where data needs to be stored
+        data_storage = os.path.abspath(self.save_path)
 
-                # Extract the contents of the ZIP file
-                with zipfile.ZipFile(file_path, 'r') as zip_ref:
-                    zip_ref.extractall(target_dir)
+        # Create the data storage directory if it doesn't exist
+        if not os.path.exists(data_storage):
+            os.makedirs(data_storage)
 
-                if verbose:
-                    print("File extracted successfully.")
-                
-                return file_path  # Return the path of the saved file
+        # Print current working directory before changing
+        print("Current working directory before change:", os.getcwd())
 
-            except Exception as e:
-                print(f"Error during download attempt #{attempt}: {e}")
-                if attempt < retries:
-                    print("Retrying...")
-                    delay = 2 ** attempt  # Exponential backoff: increase delay exponentially with each retry
-                    print(f"Waiting for {delay} seconds before retrying...")
-                    time.sleep(delay)
-                    continue
-                else:
-                    print("Max retries exceeded. Download failed.")
-                    break
+        # Change the current working directory to the specified save path
+        os.chdir(data_storage)
+        print("Current working directory after change:", os.getcwd())
+
+        # Instantiate Bhavcopy class for equities, indices, and derivatives
+        nse_equities = bhavcopy.bhavcopy('equities', imp_items.yesterday_date, imp_items.today_date, data_storage, wait_time)
+        file_path = nse_equities.get_data()
+
+        return file_path
 
 if __name__ == "__main__":
-    OUTPUT_DIR = "downloads"
-    URL = "https://nsearchives.nseindia.com/content/historical/EQUITIES/2024/APR/cm29APR2024bhav.csv.zip"
-    downloader = FileDownloader()
-    save_path = downloader.download_and_extract(URL, OUTPUT_DIR, verbose=True)
+    save_path = input("Enter the save path for Bhavcopy data: ")
+    downloader = BhavcopyDownloader(save_path)
+    downloaded_file_path = downloader.download_bhavcopy_data()
+    print("Bhavcopy data downloaded and saved at:", downloaded_file_path)
