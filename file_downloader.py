@@ -27,8 +27,9 @@ Example:
 """
 
 import os
-import imp_items
+from datetime import datetime, timedelta
 import bhavcopy
+import imp_items
 
 class BhavcopyDownloader:
     """
@@ -36,16 +37,29 @@ class BhavcopyDownloader:
 
     Attributes:
         save_path (str): The directory path where Bhavcopy data will be saved.
+        verbose (bool): Whether to print verbose messages or not.
     """
 
-    def __init__(self, path):
+    def __init__(self, path, verbose=False):
         """
-        Initialize the BhavcopyDownloader class with the specified save path.
+        Initialize the BhavcopyDownloader class with the specified save path and verbose option.
 
         Args:
             path (str): The directory path where Bhavcopy data will be saved.
+            verbose (bool, optional): Whether to print verbose messages or not. Defaults to False.
         """
         self.save_path = path
+        self.verbose = verbose
+
+    def _print_verbose(self, message):
+        """
+        Print verbose message if verbose mode is enabled.
+
+        Args:
+            message (str): The message to print.
+        """
+        if self.verbose:
+            print(message)
 
     def download_bhavcopy_data(self):
         """
@@ -67,23 +81,32 @@ class BhavcopyDownloader:
         if not os.path.exists(data_storage):
             os.makedirs(data_storage)
 
-        # Print current working directory before changing
-        print("Current working directory before change:", os.getcwd())
+        self._print_verbose("Current working directory before change: {}".format(os.getcwd()))
 
         # Change the current working directory to the specified save path
         os.chdir(data_storage)
-        print("Current working directory after change:", os.getcwd())
+        self._print_verbose("Current working directory after change: {}".format(os.getcwd()))
 
         # Instantiate Bhavcopy class for equities, indices, and derivatives
-        nse_equities = bhavcopy.bhavcopy('equities', imp_items.yesterday_date, imp_items.today_date, data_storage, wait_time)
-        nse_equities.get_data()
+        try:
+            nse_equities = bhavcopy.bhavcopy('equities', imp_items.yesterday_date, imp_items.today_date, data_storage, wait_time)
+            nse_equities.get_data()
+        except FileNotFoundError:
+            # If file not found, try downloading data for the previous day
+            self._print_verbose("File not found. Trying data for the previous day...")
+            previous_date = datetime.now() - timedelta(days=1)
+            previous_date_str = previous_date.strftime("%d%m%Y")
+            nse_equities = bhavcopy.bhavcopy('equities', previous_date_str, previous_date_str, data_storage, wait_time)
+            nse_equities.get_data()
 
-        file_path = os.path.join(data_storage,'equities.csv')
+        file_path = os.path.join(data_storage, 'equities.csv')
 
         return file_path
 
 if __name__ == "__main__":
     save_path = input("Enter the save path for Bhavcopy data: ")
-    downloader = BhavcopyDownloader(save_path)
+    verbose_input = input("Enable verbose mode? (yes/no): ").lower()
+    verbose = verbose_input.startswith('y')
+    downloader = BhavcopyDownloader(save_path, verbose=verbose)
     downloaded_file_path = downloader.download_bhavcopy_data()
     print("Bhavcopy data downloaded and saved at:", downloaded_file_path)

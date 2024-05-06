@@ -60,7 +60,8 @@ class StockAnalysis:
         Read data for each company from CSV files and store in dataframes.
         """
         for path in self.stock_data_paths:
-            df = pd.read_csv(path, usecols=[
+            df = pd.read_csv(path, usecols=[    
+                                                "Company Name",
                                                 "Series", 
                                                 "OPEN",
                                                 "HIGH",
@@ -112,8 +113,11 @@ class StockAnalysis:
             df[numeric_cols] = (df[numeric_cols] - df[numeric_cols].min()) / \
                                (df[numeric_cols].max() - df[numeric_cols].min())
 
-            df[numeric_cols] = df[numeric_cols].apply(lambda x: np.clip(x, x.quantile(0.25) - 1.5 * (x.quantile(0.75) - x.quantile(0.25)),
-                                                                         x.quantile(0.75) + 1.5 * (x.quantile(0.75) - x.quantile(0.25))))
+            df[numeric_cols] = df[numeric_cols].apply(lambda x: np.clip(
+                                                                        x,
+                                                                        x.quantile(0.25) - 1.5 * (x.quantile(0.75) - x.quantile(0.25)),
+                                                                        x.quantile(0.75) + 1.5 * (x.quantile(0.75) - x.quantile(0.25))
+                                                                        ))
 
     def encode_categorical(self, df):
         """
