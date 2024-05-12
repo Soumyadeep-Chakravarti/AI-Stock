@@ -10,12 +10,9 @@ class StockAnalysis:
     A class to perform analysis on stock market data.
 
     Attributes:
-    stock_data_paths (list): 
-        A list of paths to CSV files containing historical stock market data for different companies.
-    dfs (list): 
-        A list to store dataframes for each company.
-    models (list):
-        A list to store trained models for each company.
+    stock_data_paths (list): A list of paths to CSV files containing historical stock market data for different companies.
+    dfs (list): A list to store dataframes for each company.
+    models (list): A list to store trained models for each company.
     """
 
     def __init__(self, stock_data_paths):
@@ -98,18 +95,6 @@ class StockAnalysis:
             mse = mean_squared_error(y_test, predictions)
             print("Mean Squared Error:", mse)
 
-    def predict_future_prices(self, new_data):
-        """
-        Predict the future prices for each company.
-
-        Args:
-        new_data (list): A list of arrays containing new data for each company.
-
-        Returns:
-        list: A list of arrays containing predicted prices for each company.
-        """
-        return [model.predict(data) for model, data in zip(self.models, new_data)]
-
     def buy_or_sell(self, threshold=0.05):
         """
         Make buying or selling decisions based on predicted future prices.
@@ -140,20 +125,33 @@ class StockAnalysis:
             }
         return decisions
 
-if __name__ == "__main__":
-    stock_data_paths = ["company1.csv", "company2.csv"]
-    analyzer = StockAnalysis(stock_data_paths)
-    analyzer.collect_data()
-    analyzer.preprocess_data()
-    analyzer.build_models()
-    analyzer.evaluate_models()
+    def execute_trades(self):
+        """
+        Execute buy or sell trades based on the decisions.
 
-    # Make buying or selling decisions
-    decisions = analyzer.buy_or_sell()
-    for company, decision_data in decisions.items():
-        print(f"Company: {company}")
-        print(f"Current Price: {decision_data['Current Price']}")
-        print(f"Future Price: {decision_data['Future Price']}")
-        print(f"Price Change: {decision_data['Price Change']}")
-        print(f"Decision: {decision_data['Decision']}")
-        print()
+        Returns:
+        dict: A dictionary containing executed trades for each company.
+        """
+        trades = {}
+        for company, decision_data in self.buy_or_sell().items():
+            decision = decision_data["Decision"]
+            current_price = decision_data["Current Price"]
+            future_price = decision_data["Future Price"]
+
+            if decision == "Buy":
+                # Execute buy trade
+                trades[company] = {
+                    "Action": "Buy",
+                    "Price": current_price,
+                    "Future Price": future_price
+                }
+                # You can add your trading logic here, such as placing a buy order.
+            elif decision == "Sell":
+                # Execute sell trade
+                trades[company] = {
+                    "Action": "Sell",
+                    "Price": current_price,
+                    "Future Price": future_price
+                }
+                # You can add your trading logic here, such as placing a sell order.
+        return trades
