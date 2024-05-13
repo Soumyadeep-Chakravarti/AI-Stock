@@ -58,7 +58,7 @@ website_urls = [
 ]
 
 # Path to the "Documents" folder
-documents_folder = os.path.expanduser('~/Documents')
+documents_folder = os.path.join(os.path.expanduser("~"), 'Documents')
 base_path = os.path.join(documents_folder, 'stock_ai')
 # List of paths
 paths = [base_path,os.path.join(base_path,'data'),os.path.join(base_path,'results'),os.path.join(base_path,'data','company_wise_data')]

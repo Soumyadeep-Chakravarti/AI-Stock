@@ -51,15 +51,18 @@ class StockAnalysis:
         and preparing the data for modeling.
         """
         for df in self.dfs:
-            df.fillna(df.median(), inplace=True)  # Impute missing values with median
+            # Select only numeric columns for median calculation
+            numeric_cols = df.select_dtypes(include=np.number).columns
+            df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].median())  # Impute missing values with column medians
 
             self.encode_categorical(df)
 
             df['MA_5'] = df['CLOSE'].rolling(window=5).mean()
 
-            numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
+            # Scale numeric columns between 0 and 1
             df[numeric_cols] = (df[numeric_cols] - df[numeric_cols].min()) /(df[numeric_cols].max() - df[numeric_cols].min())
 
+            # Clip outliers
             df[numeric_cols] = df[numeric_cols].apply(lambda x: np.clip(
                 x,
                 x.quantile(0.25) - 1.5 * (x.quantile(0.75) - x.quantile(0.25)),
@@ -83,7 +86,7 @@ class StockAnalysis:
         Train a separate model for each company.
         """
         self.models = [RandomForestRegressor(n_estimators=100, random_state=42).fit(
-            *train_test_split(df[['MA_5']].values, df['CLOSE'].values, test_size=0.2, random_state=42)) for df in self.dfs]
+            df[['MA_5']], df['CLOSE']) for df in self.dfs]
 
     def evaluate_models(self):
         """

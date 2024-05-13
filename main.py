@@ -4,6 +4,7 @@ import data_formating as data_format
 import file_downloader as fd
 import web_copier as wc
 import imp_items
+import GUI
 
 OUTPUT_DIR = os.path.join(imp_items.paths[1], imp_items.formatted_today_date)
 second_OUTPUT_DIR = os.path.join(imp_items.paths[1], imp_items.formatted_yestrday_date)
@@ -38,3 +39,4 @@ if __name__ == "__main__":
         path1 = file(second_OUTPUT_DIR)
     processor = data_format.CompanyDataProcessor(path1, os.path.join(OUTPUT_DIR, 'table.csv'))
     processor.merge_and_save()
+    GUI.main()
