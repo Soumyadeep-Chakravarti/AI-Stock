@@ -45,8 +45,8 @@ class StockAnalysisGUI:
 
         self.analyze_button = ttk.Button(master, text="Analyze", command=self.analyze_company)
         self.analyze_button.grid(row=1, column=0, columnspan=2, padx=10, pady=5)
-
-        self.stock_data_paths = imp_items.find_csv_files(imp_items.paths[2])# Replace with actual file paths
+        print(imp_items.paths[3])
+        self.stock_data_paths = imp_items.find_csv_files(imp_items.paths[3])# Replace with actual file paths
         self.combo['values'] = [f"Company {i+1}" for i in range(len(self.stock_data_paths))]
 
     def analyze_company(self):
