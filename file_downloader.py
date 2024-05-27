@@ -40,7 +40,7 @@ class BhavcopyDownloader:
         verbose (bool): Whether to print verbose messages or not.
     """
 
-    def __init__(self, path, verbose=False):
+    def __init__(self, path, verbose:bool=False):
         """
         Initialize the BhavcopyDownloader class with the specified save path and verbose option.
 
