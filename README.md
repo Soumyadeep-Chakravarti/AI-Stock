@@ -37,6 +37,7 @@ The provider translates Albion-specific item IDs, quality, locations, and JSON s
 - [Instant-execution net economics experiment](docs/experiments/albion/net-economics.md)
 - [Liquidity availability study](docs/experiments/albion/liquidity-availability.md)
 - [Development conventions](docs/development/conventions.md)
+- [Release process](docs/development/releasing.md)
 - [Project roadmap](TODO.md)
 
 ## Architecture

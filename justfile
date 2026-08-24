@@ -13,6 +13,7 @@ lint:
     shellcheck .envrc
     shfmt -d .envrc
     yamllint .pre-commit-config.yaml
+    actionlint
 
 typecheck:
     uv run basedpyright

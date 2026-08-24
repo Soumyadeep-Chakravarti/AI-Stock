@@ -62,3 +62,9 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+      - id: actionlint
+        name: GitHub Actions lint
+        entry: nix develop ./.nix -c actionlint
+        language: system
+        pass_filenames: false
+        always_run: true
