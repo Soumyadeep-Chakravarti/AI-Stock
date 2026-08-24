@@ -52,3 +52,16 @@ def test_parse_current_prices_treats_zero_price_as_missing_quote(
 def test_parse_current_prices_rejects_non_list_payload() -> None:
     with pytest.raises(AlbionParseError, match="Expected a list"):
         _ = parse_current_prices(b"{}")
+
+
+def test_parse_current_prices_rejects_missing_required_field() -> None:
+    body = b"""
+    [
+        {
+            "item_id": "T4_BAG"
+        }
+    ]
+    """
+
+    with pytest.raises(AlbionParseError, match="Missing required field"):
+        _ = parse_current_prices(body)

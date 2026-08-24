@@ -50,14 +50,22 @@ def _parse_current_price_record(value: object) -> AlbionCurrentPriceRecord:
 
 
 def _read_string(record: Mapping[str, object], field: str) -> str:
-    value = record[field]
+    try:
+        value = record[field]
+    except KeyError as error:
+        raise AlbionParseError(f"Missing required field: {field}") from error
+
     if not isinstance(value, str):
         raise AlbionParseError(f"Expected {field} to be a string")
     return value
 
 
 def _read_integer(record: Mapping[str, object], field: str) -> int:
-    value = record[field]
+    try:
+        value = record[field]
+    except KeyError as error:
+        raise AlbionParseError(f"Missing required field: {field}") from error
+
     if not isinstance(value, int) or isinstance(value, bool):
         raise AlbionParseError(f"Expected {field} to be an integer")
     return value
