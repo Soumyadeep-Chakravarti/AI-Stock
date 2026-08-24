@@ -69,6 +69,7 @@ AI-Stock/
 |-- tests/
 |-- docs/
 |-- .envrc
+|-- justfile
 |-- .python-version
 |-- pyproject.toml
 `-- uv.lock
@@ -121,6 +122,8 @@ Run the complete local quality check:
 ```bash
 uv run ruff format . && uv run ruff check . && uv run basedpyright && uv run pytest -v
 ```
+
+With the Nix environment loaded, `just check` runs the extended quality gate and `just` lists all available development commands.
 
 ## Current Experiment Finding
 

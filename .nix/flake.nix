@@ -6,27 +6,51 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = import nixpkgs { inherit system; };
 
-        pythonEnv = pkgs.python314.withPackages (ps: with ps; [
-          uv
-          # add whatever GUI.py / stock_analysis.py actually need,
-          # e.g. yfinance isn't in nixpkgs — install via pip in a venv if needed
-        ]);
       in
       {
-        devShells.default = pkgs.mkShell {
-          buildInputs = [
-            pythonEnv
-            pkgs.python314Packages.pip
+        devShells.default = pkgs.mkShellNoCC {
+          packages = [
+            pkgs.python314
+            pkgs.uv
+            pkgs.git
+            pkgs.gh
+            pkgs.just
+            pkgs.pre-commit
+            pkgs.ripgrep
+            pkgs.fd
+            pkgs.jq
+            pkgs.yq-go
+            pkgs.curl
+            pkgs.httpie
+            pkgs.sqlite
+            pkgs.nixfmt
+            pkgs.nil
+            pkgs.statix
+            pkgs.deadnix
+            pkgs.shellcheck
+            pkgs.shfmt
+            pkgs.yamllint
+            pkgs.actionlint
+            pkgs.gitleaks
+            pkgs.typos
+            pkgs.pip-audit
           ];
 
           shellHook = ''
-            echo "AI-Stock dev shell (python $(python --version))"
+            export UV_PROJECT_ENVIRONMENT="$PWD/.venv"
           '';
         };
-      });
+      }
+    );
 }

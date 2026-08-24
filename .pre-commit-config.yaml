@@ -1,3 +1,4 @@
+---
 repos:
   - repo: local
     hooks:
@@ -22,6 +23,42 @@ repos:
       - id: pytest
         name: Pytest
         entry: uv run pytest -v
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: nixfmt
+        name: Nix format
+        entry: nix develop ./.nix -c nixfmt --check .nix/flake.nix
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: deadnix
+        name: Dead Nix code
+        entry: nix develop ./.nix -c deadnix .nix/flake.nix
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: statix
+        name: Nix lint
+        entry: nix develop ./.nix -c statix check .nix
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: shellcheck
+        name: ShellCheck
+        entry: nix develop ./.nix -c shellcheck .envrc
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: shfmt
+        name: Shell format
+        entry: nix develop ./.nix -c shfmt -d .envrc
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: yamllint
+        name: YAML lint
+        entry: nix develop ./.nix -c yamllint .pre-commit-config.yaml
         language: system
         pass_filenames: false
         always_run: true

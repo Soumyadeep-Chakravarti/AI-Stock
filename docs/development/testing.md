@@ -9,7 +9,7 @@ uv run basedpyright
 uv run pytest -v
 ```
 
-Pre-commit runs the same gate before each commit. Install it after syncing dependencies:
+Pre-commit runs the Python gate plus Nix, shell, and YAML checks before each commit. Install it after syncing dependencies; Nix-backed hooks enter the project shell automatically:
 
 ```bash
 uv run pre-commit install
