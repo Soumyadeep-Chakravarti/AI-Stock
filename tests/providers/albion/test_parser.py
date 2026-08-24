@@ -5,12 +5,22 @@ from pathlib import Path
 import pytest
 
 from ai_stock.market.types import InstrumentId, MarketId
-from ai_stock.providers.albion.parser import AlbionParseError, parse_current_prices
+from ai_stock.providers.albion.parser import (
+    AlbionParseError,
+    parse_current_prices,
+    parse_historical_prices,
+)
 
 
 @pytest.fixture
 def current_prices_body() -> bytes:
     fixture_path = Path(__file__).parent / "fixtures" / "current_prices.json"
+    return fixture_path.read_bytes()
+
+
+@pytest.fixture
+def historical_prices_body() -> bytes:
+    fixture_path = Path(__file__).parent / "fixtures" / "historical_prices.json"
     return fixture_path.read_bytes()
 
 
@@ -65,3 +75,19 @@ def test_parse_current_prices_rejects_missing_required_field() -> None:
 
     with pytest.raises(AlbionParseError, match="Missing required field"):
         _ = parse_current_prices(body)
+
+
+def test_parse_historical_prices_flattens_records(
+    historical_prices_body: bytes,
+) -> None:
+    observations = parse_historical_prices(historical_prices_body)
+
+    assert len(observations) == 2
+    assert observations[0].instrument_id == InstrumentId("T4_BAG")
+    assert observations[0].market_id == MarketId("Caerleon")
+    assert observations[0].price == Decimal(6543)
+    assert observations[0].quantity == Decimal(285)
+    assert observations[0].observed_at == datetime(2026, 7, 25, tzinfo=UTC)
+    assert observations[1].price == Decimal(7127)
+    assert observations[1].quantity == Decimal(322)
+    assert observations[1].observed_at == datetime(2026, 7, 26, tzinfo=UTC)

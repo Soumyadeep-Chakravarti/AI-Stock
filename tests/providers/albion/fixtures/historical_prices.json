@@ -1,0 +1,19 @@
+[
+  {
+    "location": "Caerleon",
+    "item_id": "T4_BAG",
+    "quality": 1,
+    "data": [
+      {
+        "item_count": 285,
+        "avg_price": 6543,
+        "timestamp": "2026-07-25T00:00:00"
+      },
+      {
+        "item_count": 322,
+        "avg_price": 7127,
+        "timestamp": "2026-07-26T00:00:00"
+      }
+    ]
+  }
+]
