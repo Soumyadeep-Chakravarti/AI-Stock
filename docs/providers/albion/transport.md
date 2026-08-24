@@ -17,12 +17,16 @@ All inputs must be greater than zero.
 ```text
 units_per_trip = min(quantity, transport_capacity)
 trip_count     = ceil(quantity / transport_capacity)
-profit_per_trip = net_profit_per_unit * units_per_trip
-total_profit    = net_profit_per_unit * quantity
-profit_per_hour = profit_per_trip / trip_time
+total_transport_time = trip_count * trip_time
+full_trip_profit = net_profit_per_unit * units_per_trip
+full_trip_profit_per_hour = full_trip_profit / trip_time
+total_profit = net_profit_per_unit * quantity
+realization_profit_per_hour = total_profit / total_transport_time
 ```
 
-`TransportAdjustedOpportunity` preserves the underlying net opportunity and reports the requested quantity, capacity-limited trip size, trip count, per-trip profit, total profit, and hourly profit.
+`full_trip_profit_per_hour` describes a fully loaded cycle. `realization_profit_per_hour` describes completing the requested quantity, including the time spent on a partial final trip. They are equal only when quantity divides evenly by capacity.
+
+`TransportAdjustedOpportunity` preserves the underlying net opportunity and reports both rates, requested quantity, capacity-limited trip size, trip count, total transport time, and total profit.
 
 No static city-route configuration is included. Cycle time depends on mount, loadout, route, player behavior, return-trip assumptions, and eventually risk policy. A later empirical `RouteProfile` should be based on recorded runs rather than invented constants.
 
