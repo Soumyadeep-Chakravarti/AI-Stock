@@ -6,72 +6,46 @@ AI-Stock is a Python backend for retrieving, normalizing, and analyzing market d
 
 **Early development.**
 
-The current implementation establishes the backend foundation before market-data providers and analysis features are added.
+The backend has a working Albion Online REST provider, generic historical statistics, gross cross-market arbitrage analysis, freshness policy, scan diagnostics, and live-validation experiments. It remains intentionally small: net costs, transport economics, persistence, streaming ingestion, and machine learning are not implemented.
 
-Implemented so far:
+## Albion First
 
-- HTTP request and response abstractions
-- Pluggable network client interface
-- `urllib`-based network client
-- Query parameter handling
-- HTTP and transport error handling
-- Automated network tests
-- Strict static type checking
-- Reproducible Python and Nix development environment
-
-## Albion Online Testbed
-
-AI-Stock is intended to be a general market-analysis backend, but its first real implementation target is Albion Online's player-driven economy. Albion is not a simulation of a stock market. It is a distinct, real market with buyers, sellers, regional prices, transaction volume, bid and ask spreads, arbitrage opportunities, and economic consequences.
-
-This makes it a controlled environment with an actual use case for developing and validating market-analysis infrastructure before applying it to financial markets. For example, a regional arbitrage recommendation can be executed in Albion and compared with its expected margin.
-
-The Albion provider will translate game-specific data into normalized market data. The analysis layer must not depend on whether an instrument is an Albion item or a financial asset.
+Albion Online is the first real testbed for AI-Stock's generic market architecture. It is not a stock-market simulation. Its player-driven economy provides real bid/ask spreads, regional markets, historical aggregates, and outcomes that can be checked in-game without risking real financial capital.
 
 ```text
-                 AI-Stock
-                    |
-           Generic market models
-                    |
-          Analysis and strategies
-                    |
-             Provider API
-             /            \
-            v              v
-     Albion provider   Financial providers
-            |              |
-            v              v
-     Albion economy    NSE / NYSE / ...
-            |
-            v
-      First testbed
+Albion API -> Albion provider -> generic observations -> analysis/scanner
 ```
 
-Potential Albion validation work includes price-movement prediction, spread and liquidity analysis, regional arbitrage, volatility and volume signals, portfolio allocation, risk-adjusted returns, and backtesting against forward results. Mistakes in this testbed do not involve real-world financial capital.
+The provider translates Albion-specific item IDs, quality, locations, and JSON schema before data reaches generic analysis. Future financial sources should follow the same boundary.
+
+## Documentation
+
+- [Architecture overview](docs/architecture/overview.md)
+- [Market model](docs/architecture/market-model.md)
+- [Networking](docs/architecture/networking.md)
+- [Provider boundary](docs/architecture/providers.md)
+- [Analysis](docs/architecture/analysis.md)
+- [Scanner](docs/architecture/scanner.md)
+- [Albion provider](docs/providers/albion/overview.md)
+- [Albion data semantics](docs/providers/albion/data-semantics.md)
+- [Gross arbitrage](docs/analysis/arbitrage.md)
+- [Freshness policy](docs/analysis/freshness.md)
+- [Albion experiment methodology](docs/experiments/albion/methodology.md)
+- [Freshness policy experiment](docs/experiments/albion/freshness-policy.md)
+- [Development conventions](docs/development/conventions.md)
 
 ## Architecture
 
-The backend is built in layers:
+The active dependency direction is:
 
 ```text
-StockAlgo and other clients
-            |
-            v
-    Application layer
-            |
-            v
-  Analysis and services
-            |
-            v
-        Providers
-            |
-            v
-     Network layer
-            |
-            v
- External market APIs
+External source -> Network -> Provider -> Generic market observations
+                                             |              |
+                                             v              v
+                                         Analysis         Scanner
 ```
 
-Provider-specific API formats remain isolated from the rest of the application. The network layer handles HTTP transport and raw bytes; providers parse and normalize external data; analysis operates on normalized market models.
+`analysis` imports generic market types only. Provider-specific API details remain inside `providers`.
 
 ## Project Structure
 
@@ -82,16 +56,13 @@ AI-Stock/
 |   `-- flake.nix
 |-- src/
 |   `-- ai_stock/
+|       |-- analysis/
+|       |-- market/
 |       |-- network/
-|       |   |-- client.py
-|       |   |-- errors.py
-|       |   |-- types.py
-|       |   `-- urllib_client.py
-|       |-- __init__.py
-|       `-- types.py
+|       |-- providers/albion/
+|       `-- scanner/
 |-- tests/
-|   `-- network/
-|       `-- test_urllib_client.py
+|-- docs/
 |-- .envrc
 |-- .python-version
 |-- pyproject.toml
@@ -146,65 +117,9 @@ Run the complete local quality check:
 uv run ruff format . && uv run ruff check . && uv run basedpyright && uv run pytest -v
 ```
 
-## Network Layer
+## Current Experiment Finding
 
-The network layer deliberately provides a small transport abstraction:
-
-```text
-HttpRequest
-     |
-     v
-NetworkClient
-     |
-     v
-UrllibNetworkClient
-     |
-     v
-HttpResponse
-```
-
-`NetworkClient` is a protocol, so higher-level components can depend on the abstraction rather than `urllib`. The current client supports GET, POST, PUT, PATCH, DELETE, request headers, query parameters, request bodies, HTTP error responses, and transport failure abstraction.
-
-The network layer intentionally does not parse JSON or understand market data. It only transports requests and responses.
-
-## Testing
-
-Network tests use a local HTTP server and do not depend on external services. The suite verifies basic GET requests, query parameter encoding, preservation of existing query parameters, POST methods and bodies, HTTP error responses, and transport failures.
-
-## Planned Development
-
-```text
-Network foundation
-        |
-        v
-Provider abstraction
-        |
-        v
-Albion market-data provider
-        |
-        v
-Normalized market models
-        |
-        v
-Analysis services and strategies
-        |
-        v
-Financial market providers
-        |
-        v
-Application interfaces
-```
-
-## Design Principles
-
-- Keep dependencies minimal.
-- Prefer standard-library functionality where practical.
-- Maintain strict type checking.
-- Keep external API details inside provider implementations.
-- Keep transport independent of serialization and domain logic.
-- Test infrastructure before building features on top of it.
-- Keep the backend independent of frontend concerns.
-- Prefer explicit interfaces over tightly coupled implementations.
+On an observed 50-item Albion Asia snapshot, quote coverage plateaued at a 24-hour maximum age. Timestamp skew controlled confidence rather than source-side coverage: qualifying gross opportunities rose from 43 at 30-minute skew to 91 without a skew limit. These are provisional observed policies, not global constants. See the [freshness policy study](docs/experiments/albion/freshness-policy.md).
 
 ## License
 
