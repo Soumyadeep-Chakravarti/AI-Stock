@@ -1,6 +1,7 @@
+---
 name: Release
 
-on:
+"on":
   push:
     tags: ["v*"]
 
@@ -30,7 +31,13 @@ jobs:
 
       - name: Verify release version
         run: |
-          version="$(nix develop ./.nix -c python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
+          version="$(
+            nix develop ./.nix -c python -c '
+          import tomllib
+          with open("pyproject.toml", "rb") as file:
+              print(tomllib.load(file)["project"]["version"])
+          '
+          )"
           test "v${version}" = "${GITHUB_REF_NAME}"
 
       - name: Run quality gate

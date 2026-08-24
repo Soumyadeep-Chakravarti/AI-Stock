@@ -58,7 +58,7 @@ repos:
         always_run: true
       - id: yamllint
         name: YAML lint
-        entry: nix develop ./.nix -c yamllint .pre-commit-config.yaml
+        entry: nix develop ./.nix -c yamllint .pre-commit-config.yaml .github
         language: system
         pass_filenames: false
         always_run: true

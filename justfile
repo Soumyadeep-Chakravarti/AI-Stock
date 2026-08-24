@@ -12,7 +12,7 @@ lint:
     statix check .nix
     shellcheck .envrc
     shfmt -d .envrc
-    yamllint .pre-commit-config.yaml
+    yamllint .pre-commit-config.yaml .github
     actionlint
 
 typecheck:
