@@ -2,9 +2,10 @@
 
 ## Next: Liquidity And Sizing
 
-- Investigate which Albion source can provide available quantity at the quoted bid and ask prices.
-- Define quantity-constrained opportunity sizing from observed liquidity.
-- Prevent transport calculations from assuming a requested quantity can execute at one quoted price.
+- The current Albion Data Project REST source does not provide available quantity at its quoted bid or ask prices. See the [liquidity availability study](docs/experiments/albion/liquidity-availability.md).
+- Identify a source that provides current order-side quantity or depth with clear semantics.
+- Define quantity-constrained opportunity sizing only from observed executable liquidity.
+- Keep transport calculations from assuming a requested quantity can execute at one quoted price.
 
 ## Transport Evidence
 

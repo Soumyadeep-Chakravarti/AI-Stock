@@ -6,7 +6,7 @@ AI-Stock is a Python backend for retrieving, normalizing, and analyzing market d
 
 **Early development.**
 
-The backend has a working Albion Online REST provider, generic historical statistics, gross cross-market arbitrage analysis, freshness policy, scan diagnostics, and live-validation experiments. It remains intentionally small: net costs, transport economics, persistence, streaming ingestion, and machine learning are not implemented.
+The backend has a working Albion Online REST provider, generic historical statistics, gross and net cross-market arbitrage analysis, freshness policy, transport economics with caller-supplied capacity and cycle time, scan diagnostics, and live-validation experiments. It remains intentionally small: live order-depth liquidity, persistence, streaming ingestion, and machine learning are not implemented.
 
 ## Albion First
 
@@ -35,6 +35,7 @@ The provider translates Albion-specific item IDs, quality, locations, and JSON s
 - [Albion experiment methodology](docs/experiments/albion/methodology.md)
 - [Freshness policy experiment](docs/experiments/albion/freshness-policy.md)
 - [Instant-execution net economics experiment](docs/experiments/albion/net-economics.md)
+- [Liquidity availability study](docs/experiments/albion/liquidity-availability.md)
 - [Development conventions](docs/development/conventions.md)
 - [Project roadmap](TODO.md)
 
