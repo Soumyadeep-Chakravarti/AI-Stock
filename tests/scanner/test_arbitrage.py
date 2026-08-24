@@ -35,13 +35,14 @@ class _FakeCurrentPriceClient:
 def _observation(
     market_id: str,
     *,
+    instrument_id: str = "T4_BAG",
     bid_price: int | None,
     bid_observed_at: datetime | None,
     ask_price: int | None,
     ask_observed_at: datetime | None,
 ) -> CurrentPriceObservation:
     return CurrentPriceObservation(
-        instrument_id=InstrumentId("instrument"),
+        instrument_id=InstrumentId(instrument_id),
         market_id=MarketId(market_id),
         bid_price=Decimal(bid_price) if bid_price is not None else None,
         bid_observed_at=bid_observed_at,
@@ -52,8 +53,12 @@ def _observation(
 
 def test_scan_arbitrage_fetches_and_filters_opportunities() -> None:
     now = datetime(2026, 1, 1, 12, tzinfo=UTC)
-    item_ids = [AlbionItemId("T4_BAG")]
-    locations = [AlbionLocation("Bridgewatch"), AlbionLocation("Caerleon")]
+    item_ids = [AlbionItemId("T4_BAG"), AlbionItemId("T5_BAG")]
+    locations = [
+        AlbionLocation("Bridgewatch"),
+        AlbionLocation("Caerleon"),
+        AlbionLocation("Stale"),
+    ]
     qualities = [AlbionQuality(1)]
     client = _FakeCurrentPriceClient(
         [
@@ -105,3 +110,13 @@ def test_scan_arbitrage_fetches_and_filters_opportunities() -> None:
     assert not statuses[MarketId("Stale")].ask_present
     assert not statuses[MarketId("Stale")].bid_fresh
     assert not statuses[MarketId("Stale")].ask_fresh
+
+    coverage = {coverage.instrument_id: coverage for coverage in result.coverage}
+    assert coverage[InstrumentId("T4_BAG")].requested_market_count == 3
+    assert coverage[InstrumentId("T4_BAG")].returned_record_count == 3
+    assert coverage[InstrumentId("T4_BAG")].fresh_bid_count == 2
+    assert coverage[InstrumentId("T4_BAG")].fresh_ask_count == 2
+    assert coverage[InstrumentId("T4_BAG")].usable_market_count == 2
+    assert coverage[InstrumentId("T4_BAG")].usable_market_ratio == Decimal(2) / 3
+    assert coverage[InstrumentId("T5_BAG")].returned_record_count == 0
+    assert coverage[InstrumentId("T5_BAG")].usable_market_ratio == Decimal(0)
