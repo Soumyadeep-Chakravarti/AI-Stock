@@ -29,9 +29,11 @@ class TransportAdjustedOpportunity:
     units_per_trip: int
     trip_count: int
     trip_time: timedelta
-    profit_per_trip: Decimal
+    total_transport_time: timedelta
+    full_trip_profit: Decimal
+    full_trip_profit_per_hour: Decimal
     total_profit: Decimal
-    profit_per_hour: Decimal
+    realization_profit_per_hour: Decimal
 
 
 def calculate_transport_adjusted_opportunity(
@@ -42,9 +44,11 @@ def calculate_transport_adjusted_opportunity(
     trip_count = (
         inputs.quantity + inputs.transport_capacity - 1
     ) // inputs.transport_capacity
-    profit_per_trip = net_opportunity.net_profit * Decimal(units_per_trip)
+    total_transport_time = inputs.trip_time * trip_count
+    full_trip_profit = net_opportunity.net_profit * Decimal(units_per_trip)
     total_profit = net_opportunity.net_profit * Decimal(inputs.quantity)
-    profit_per_hour = profit_per_trip / _duration_hours(inputs.trip_time)
+    full_trip_profit_per_hour = full_trip_profit / _duration_hours(inputs.trip_time)
+    realization_profit_per_hour = total_profit / _duration_hours(total_transport_time)
 
     return TransportAdjustedOpportunity(
         net_opportunity=net_opportunity,
@@ -52,9 +56,11 @@ def calculate_transport_adjusted_opportunity(
         units_per_trip=units_per_trip,
         trip_count=trip_count,
         trip_time=inputs.trip_time,
-        profit_per_trip=profit_per_trip,
+        total_transport_time=total_transport_time,
+        full_trip_profit=full_trip_profit,
+        full_trip_profit_per_hour=full_trip_profit_per_hour,
         total_profit=total_profit,
-        profit_per_hour=profit_per_hour,
+        realization_profit_per_hour=realization_profit_per_hour,
     )
 
 

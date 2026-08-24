@@ -44,9 +44,11 @@ def test_calculate_transport_adjusted_opportunity() -> None:
 
     assert result.units_per_trip == 10
     assert result.trip_count == 3
-    assert result.profit_per_trip == Decimal("150.00")
+    assert result.total_transport_time == timedelta(minutes=90)
+    assert result.full_trip_profit == Decimal("150.00")
+    assert result.full_trip_profit_per_hour == Decimal("300.00")
     assert result.total_profit == Decimal("375.00")
-    assert result.profit_per_hour == Decimal("300.00")
+    assert result.realization_profit_per_hour == Decimal("250.00")
 
 
 @pytest.mark.parametrize(
