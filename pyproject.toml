@@ -17,7 +17,12 @@ requires = ["uv_build>=0.12.3,<0.13.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
-dev = ["basedpyright>=1.39.10", "pytest>=9.1.1", "ruff>=0.16.3"]
+dev = [
+    "basedpyright>=1.39.10",
+    "pre-commit>=4.6.2",
+    "pytest>=9.1.1",
+    "ruff>=0.16.3",
+]
 
 [tool.ruff]
 exclude = ["AI-Stock-Backup"]

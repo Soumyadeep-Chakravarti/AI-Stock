@@ -9,6 +9,18 @@ uv run basedpyright
 uv run pytest -v
 ```
 
+Pre-commit runs the same gate before each commit. Install it after syncing dependencies:
+
+```bash
+uv run pre-commit install
+```
+
+Run every configured hook manually with:
+
+```bash
+uv run pre-commit run --all-files
+```
+
 Test boundaries deliberately avoid live Albion dependencies:
 
 - Network tests use a local HTTP server.
