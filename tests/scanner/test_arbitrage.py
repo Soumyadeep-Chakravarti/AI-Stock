@@ -81,7 +81,7 @@ def test_scan_arbitrage_fetches_and_filters_opportunities() -> None:
         ]
     )
 
-    opportunities = scan_arbitrage(
+    result = scan_arbitrage(
         client,
         item_ids=item_ids,
         locations=locations,
@@ -92,6 +92,16 @@ def test_scan_arbitrage_fetches_and_filters_opportunities() -> None:
     )
 
     assert client.calls == [(item_ids, locations, qualities)]
-    assert len(opportunities) == 1
-    assert opportunities[0].buy_market_id == MarketId("Bridgewatch")
-    assert opportunities[0].sell_market_id == MarketId("Caerleon")
+    assert len(result.opportunities) == 1
+    assert result.opportunities[0].buy_market_id == MarketId("Bridgewatch")
+    assert result.opportunities[0].sell_market_id == MarketId("Caerleon")
+
+    statuses = {status.market_id: status for status in result.quote_statuses}
+    assert statuses[MarketId("Bridgewatch")].bid_present
+    assert statuses[MarketId("Bridgewatch")].ask_present
+    assert statuses[MarketId("Bridgewatch")].bid_fresh
+    assert statuses[MarketId("Bridgewatch")].ask_fresh
+    assert statuses[MarketId("Stale")].bid_present
+    assert not statuses[MarketId("Stale")].ask_present
+    assert not statuses[MarketId("Stale")].bid_fresh
+    assert not statuses[MarketId("Stale")].ask_fresh
