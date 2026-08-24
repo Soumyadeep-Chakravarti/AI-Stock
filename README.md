@@ -36,6 +36,7 @@ The provider translates Albion-specific item IDs, quality, locations, and JSON s
 - [Freshness policy experiment](docs/experiments/albion/freshness-policy.md)
 - [Instant-execution net economics experiment](docs/experiments/albion/net-economics.md)
 - [Development conventions](docs/development/conventions.md)
+- [Project roadmap](TODO.md)
 
 ## Architecture
 
