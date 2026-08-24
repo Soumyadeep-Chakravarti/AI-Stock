@@ -116,7 +116,11 @@ def test_scan_arbitrage_fetches_and_filters_opportunities() -> None:
     assert coverage[InstrumentId("T4_BAG")].returned_record_count == 3
     assert coverage[InstrumentId("T4_BAG")].fresh_bid_count == 2
     assert coverage[InstrumentId("T4_BAG")].fresh_ask_count == 2
+    assert coverage[InstrumentId("T4_BAG")].fresh_bid_only_market_count == 0
+    assert coverage[InstrumentId("T4_BAG")].fresh_ask_only_market_count == 0
+    assert coverage[InstrumentId("T4_BAG")].fresh_both_side_market_count == 2
     assert coverage[InstrumentId("T4_BAG")].usable_market_count == 2
     assert coverage[InstrumentId("T4_BAG")].usable_market_ratio == Decimal(2) / 3
+    assert coverage[InstrumentId("T4_BAG")].potential_cross_market_pair_count == 2
     assert coverage[InstrumentId("T5_BAG")].returned_record_count == 0
     assert coverage[InstrumentId("T5_BAG")].usable_market_ratio == Decimal(0)

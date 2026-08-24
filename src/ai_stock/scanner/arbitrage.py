@@ -45,8 +45,12 @@ class ScanCoverage:
     returned_record_count: int
     fresh_bid_count: int
     fresh_ask_count: int
+    fresh_bid_only_market_count: int
+    fresh_ask_only_market_count: int
+    fresh_both_side_market_count: int
     usable_market_count: int
     usable_market_ratio: Decimal
+    potential_cross_market_pair_count: int
 
 
 @dataclass(frozen=True, slots=True)
@@ -130,6 +134,13 @@ def _coverage(
         usable_market_count = sum(
             status.bid_fresh and status.ask_fresh for status in statuses
         )
+        potential_cross_market_pair_count = sum(
+            buy_status.market_id != sell_status.market_id
+            for buy_status in statuses
+            if buy_status.ask_fresh
+            for sell_status in statuses
+            if sell_status.bid_fresh
+        )
         coverage.append(
             ScanCoverage(
                 instrument_id=instrument_id,
@@ -137,12 +148,20 @@ def _coverage(
                 returned_record_count=len(statuses),
                 fresh_bid_count=sum(status.bid_fresh for status in statuses),
                 fresh_ask_count=sum(status.ask_fresh for status in statuses),
+                fresh_bid_only_market_count=sum(
+                    status.bid_fresh and not status.ask_fresh for status in statuses
+                ),
+                fresh_ask_only_market_count=sum(
+                    status.ask_fresh and not status.bid_fresh for status in statuses
+                ),
+                fresh_both_side_market_count=usable_market_count,
                 usable_market_count=usable_market_count,
                 usable_market_ratio=(
                     Decimal(usable_market_count) / Decimal(requested_market_count)
                     if requested_market_count > 0
                     else Decimal(0)
                 ),
+                potential_cross_market_pair_count=potential_cross_market_pair_count,
             )
         )
 
