@@ -174,3 +174,15 @@ def test_filter_fresh_opportunities_can_skip_timestamp_skew_filter() -> None:
     )
 
     assert opportunities == (skewed,)
+
+
+def test_arbitrage_opportunity_exposes_quote_age_and_timestamp_skew() -> None:
+    now = datetime(2026, 1, 1, 12, tzinfo=UTC)
+    opportunity = _opportunity(
+        buy_observed_at=now - timedelta(minutes=20),
+        sell_observed_at=now - timedelta(minutes=5),
+    )
+
+    assert opportunity.buy_quote_age(now) == timedelta(minutes=20)
+    assert opportunity.sell_quote_age(now) == timedelta(minutes=5)
+    assert opportunity.timestamp_skew == timedelta(minutes=15)

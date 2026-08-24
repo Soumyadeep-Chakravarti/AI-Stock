@@ -20,6 +20,16 @@ class ArbitrageOpportunity:
     gross_profit: Decimal
     gross_return_percentage: Decimal
 
+    def buy_quote_age(self, now: datetime) -> timedelta:
+        return now - self.buy_observed_at
+
+    def sell_quote_age(self, now: datetime) -> timedelta:
+        return now - self.sell_observed_at
+
+    @property
+    def timestamp_skew(self) -> timedelta:
+        return abs(self.buy_observed_at - self.sell_observed_at)
+
 
 def find_arbitrage_opportunities(
     observations: Sequence[CurrentPriceObservation],
@@ -84,11 +94,10 @@ def filter_fresh_opportunities(
     return tuple(
         opportunity
         for opportunity in opportunities
-        if now - opportunity.buy_observed_at <= max_quote_age
-        and now - opportunity.sell_observed_at <= max_quote_age
+        if opportunity.buy_quote_age(now) <= max_quote_age
+        and opportunity.sell_quote_age(now) <= max_quote_age
         and (
             max_timestamp_skew is None
-            or abs(opportunity.buy_observed_at - opportunity.sell_observed_at)
-            <= max_timestamp_skew
+            or opportunity.timestamp_skew <= max_timestamp_skew
         )
     )
