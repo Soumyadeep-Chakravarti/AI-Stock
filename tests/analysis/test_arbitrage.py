@@ -54,6 +54,20 @@ def test_find_arbitrage_opportunities_ignores_invalid_or_unprofitable_quotes() -
     assert opportunities == ()
 
 
+def test_find_arbitrage_opportunities_ignores_non_positive_quotes() -> None:
+    opportunities = find_arbitrage_opportunities(
+        [
+            _observation("instrument", "zero-ask", bid_price=None, ask_price=0),
+            _observation("instrument", "negative-ask", bid_price=None, ask_price=-10),
+            _observation("instrument", "zero-bid", bid_price=0, ask_price=None),
+            _observation("instrument", "negative-bid", bid_price=-100, ask_price=None),
+            _observation("instrument", "valid-bid", bid_price=100, ask_price=None),
+        ]
+    )
+
+    assert opportunities == ()
+
+
 def test_find_arbitrage_opportunities_does_not_cross_instruments() -> None:
     opportunities = find_arbitrage_opportunities(
         [

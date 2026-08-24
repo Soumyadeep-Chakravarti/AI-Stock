@@ -24,7 +24,7 @@ def find_arbitrage_opportunities(
     opportunities: list[ArbitrageOpportunity] = []
 
     for buy_observation in observations:
-        if buy_observation.ask_price is None:
+        if buy_observation.ask_price is None or buy_observation.ask_price <= 0:
             continue
 
         for sell_observation in observations:
@@ -32,6 +32,7 @@ def find_arbitrage_opportunities(
                 sell_observation.instrument_id != buy_observation.instrument_id
                 or sell_observation.market_id == buy_observation.market_id
                 or sell_observation.bid_price is None
+                or sell_observation.bid_price <= 0
             ):
                 continue
 
