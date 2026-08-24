@@ -29,6 +29,7 @@ The provider translates Albion-specific item IDs, quality, locations, and JSON s
 - [Albion provider](docs/providers/albion/overview.md)
 - [Albion data semantics](docs/providers/albion/data-semantics.md)
 - [Albion instant-execution economics](docs/providers/albion/economics.md)
+- [Albion transport economics](docs/providers/albion/transport.md)
 - [Gross arbitrage](docs/analysis/arbitrage.md)
 - [Freshness policy](docs/analysis/freshness.md)
 - [Albion experiment methodology](docs/experiments/albion/methodology.md)

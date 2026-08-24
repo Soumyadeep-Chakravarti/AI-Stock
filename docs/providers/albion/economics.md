@@ -29,4 +29,4 @@ Setup fees are explicitly rejected by the instant-execution calculator. They bel
 
 The engine intentionally preserves exact `Decimal` arithmetic and does not quantize tax. Albion prices are integer silver, but the authoritative in-game rounding stage and direction have not yet been verified empirically. Reproduce integer rounding only after that behavior is measured and documented.
 
-Net results still exclude transport, travel time, capacity, route risk, slippage, and execution probability.
+Manual transport inputs can now adjust a net opportunity for quantity, capacity, and complete cycle time. See [transport economics](transport.md). Route risk, loss probability, capacity by item weight, slippage, and execution probability remain outside v1.
