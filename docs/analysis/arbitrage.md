@@ -22,4 +22,4 @@ Opportunities are ranked by gross profit. They retain their buy and sell timesta
 
 ## Excluded Economics
 
-The detector does not currently model transaction fees, listing/setup fees, transport cost, travel time, capacity, route risk, slippage, execution probability, or price movement during transport. Those belong to later net-arbitrage and execution layers.
+The detector itself does not model costs. Albion's separate immediate-execution economics policy currently applies market tax only; listing/setup fees, transport cost, travel time, capacity, route risk, slippage, execution probability, and price movement during transport remain outside the model.

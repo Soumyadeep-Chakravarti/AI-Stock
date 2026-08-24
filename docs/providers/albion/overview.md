@@ -18,3 +18,5 @@ CurrentPriceObservation / HistoricalPriceObservation
 Albion item IDs, qualities, locations, endpoint paths, and response field names are provider concerns. Analysis receives only generic IDs and observations.
 
 The initial REST implementation is intentionally separate from the project's NATS streams. Streaming has replay and missed-message concerns and is a later ingestion subsystem.
+
+The provider also contains the first deterministic economics policy for immediate market execution. See [instant-execution economics](economics.md).
