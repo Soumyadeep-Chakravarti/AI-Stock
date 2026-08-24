@@ -1,0 +1,32 @@
+[project]
+name = "ai-stock"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+  { name = "Soumyadeep Chakravrti", email = "soumyadeepsai1@gmail.com" },
+]
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+ai-stock = "ai_stock:main"
+
+[build-system]
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = ["basedpyright>=1.39.10", "pytest>=9.1.1", "ruff>=0.16.3"]
+
+[tool.ruff]
+exclude = ["AI-Stock-Backup"]
+
+[tool.basedpyright]
+exclude = ["AI-Stock-Backup"]
+venvPath = "."
+venv = ".venv"
+include = ["src"]
+extraPaths = ["src"]
+[[tool.basedpyright.executionEnvironments]]
+root = "src"
