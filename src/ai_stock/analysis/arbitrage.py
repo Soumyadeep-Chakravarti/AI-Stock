@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from ai_stock.market.types import CurrentPriceObservation, InstrumentId, MarketId
@@ -13,7 +14,9 @@ class ArbitrageOpportunity:
     buy_market_id: MarketId
     sell_market_id: MarketId
     buy_price: Decimal
+    buy_observed_at: datetime
     sell_price: Decimal
+    sell_observed_at: datetime
     gross_profit: Decimal
     gross_return_percentage: Decimal
 
@@ -24,7 +27,11 @@ def find_arbitrage_opportunities(
     opportunities: list[ArbitrageOpportunity] = []
 
     for buy_observation in observations:
-        if buy_observation.ask_price is None or buy_observation.ask_price <= 0:
+        if (
+            buy_observation.ask_price is None
+            or buy_observation.ask_price <= 0
+            or buy_observation.ask_observed_at is None
+        ):
             continue
 
         for sell_observation in observations:
@@ -33,6 +40,7 @@ def find_arbitrage_opportunities(
                 or sell_observation.market_id == buy_observation.market_id
                 or sell_observation.bid_price is None
                 or sell_observation.bid_price <= 0
+                or sell_observation.bid_observed_at is None
             ):
                 continue
 
@@ -46,7 +54,9 @@ def find_arbitrage_opportunities(
                     buy_market_id=buy_observation.market_id,
                     sell_market_id=sell_observation.market_id,
                     buy_price=buy_observation.ask_price,
+                    buy_observed_at=buy_observation.ask_observed_at,
                     sell_price=sell_observation.bid_price,
+                    sell_observed_at=sell_observation.bid_observed_at,
                     gross_profit=gross_profit,
                     gross_return_percentage=(
                         gross_profit / buy_observation.ask_price * Decimal(100)
@@ -59,5 +69,26 @@ def find_arbitrage_opportunities(
             opportunities,
             key=lambda opportunity: opportunity.gross_profit,
             reverse=True,
+        )
+    )
+
+
+def filter_fresh_opportunities(
+    opportunities: Sequence[ArbitrageOpportunity],
+    *,
+    now: datetime,
+    max_quote_age: timedelta,
+    max_timestamp_skew: timedelta | None = None,
+) -> Sequence[ArbitrageOpportunity]:
+    """Return opportunities whose quote ages and optional timestamp skew are acceptable."""
+    return tuple(
+        opportunity
+        for opportunity in opportunities
+        if now - opportunity.buy_observed_at <= max_quote_age
+        and now - opportunity.sell_observed_at <= max_quote_age
+        and (
+            max_timestamp_skew is None
+            or abs(opportunity.buy_observed_at - opportunity.sell_observed_at)
+            <= max_timestamp_skew
         )
     )
