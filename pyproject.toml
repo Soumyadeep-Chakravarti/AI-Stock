@@ -1,16 +1,14 @@
 [project]
 name = "ai-stock"
 version = "0.1.0"
-description = "Add your description here"
+description = "Typed market-data retrieval, normalization, and arbitrage analysis."
 readme = "README.md"
+license = "MIT"
 authors = [
   { name = "Soumyadeep Chakravrti", email = "soumyadeepsai1@gmail.com" },
 ]
 requires-python = ">=3.14"
 dependencies = []
-
-[project.scripts]
-ai-stock = "ai_stock:main"
 
 [build-system]
 requires = ["uv_build>=0.12.3,<0.13.0"]

@@ -132,4 +132,4 @@ On an observed 50-item Albion Asia snapshot, quote coverage plateaued at a 24-ho
 
 ## License
 
-Licensing for the rewritten project has not yet been defined.
+This project is licensed under the [MIT License](LICENSE).
